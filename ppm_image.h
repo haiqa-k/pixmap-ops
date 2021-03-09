@@ -17,13 +17,21 @@ namespace agl
 
   class ppm_image
   {
-  public:
-     ppm_image();
-     ppm_image(int width, int height);
-     ppm_image(const ppm_image& orig);
-     ppm_image& operator=(const ppm_image& orig);
+   protected:
+      int ht = 0; //number of rows
+      int wd = 0; //number of columns
+      ppm_pixel **image = NULL; //2D array pointer
+      void clear();
 
-     virtual ~ppm_image();
+  public:
+     ppm_image(); //default constructor
+     ppm_image(int width, int height); //constructor
+     ppm_image(const ppm_image& orig); //copy constructor
+     ppm_image& operator=(const ppm_image& orig); //assignment operator
+
+     virtual ~ppm_image(); //destructor
+
+     
 
      // load the given filename
      // returns true if the load is successful; false otherwise
@@ -58,6 +66,9 @@ namespace agl
      // Return a copy of this image converted to grayscale
      ppm_image grayscale() const;
 
+     //inverts the image
+     ppm_image invert() const;
+
      // Get the pixel at index (row, col)
      ppm_pixel get(int row, int col) const;
 
@@ -69,5 +80,7 @@ namespace agl
 
      // return the height of the image
      int height() const;
+
+     
   };
 }
