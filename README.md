@@ -46,10 +46,20 @@ pixmap-ops/build $ ../bin/pixmap_art
 ## Image operators
 
 TODO: Document the features of your PPM image class here. Include example images.
+```
+Resize
+```
+<img width="196" alt="earth_resize" src="https://user-images.githubusercontent.com/79232961/111062153-9c1f2f80-847d-11eb-8f2a-8f100969be18.png">
 
-## Results
+```
+Subimge:
+```
+<img width="394" alt="earth_subimage" src="https://user-images.githubusercontent.com/79232961/111062149-988ba880-847d-11eb-9e6b-db1ffa21a7cf.png">
 
-TODO: Show artworks using your class
+```
+Gamma Correction
+```
+<img width="395" alt="earth_gamma" src="https://user-images.githubusercontent.com/79232961/111062151-9aee0280-847d-11eb-96ac-2345b0dcf1e4.png">
 
 ```
 Original Image:
@@ -95,6 +105,14 @@ Channel Shift:
 Blue Shift:
 ```
 <img width="697" alt="star_blueshift" src="https://user-images.githubusercontent.com/79232961/111060922-c4eff680-8476-11eb-940e-03cebe665aba.png">
+
+
+
+
+## Results
+
+TODO: Show artworks using your class
+
 
 ```
 Channel shifting an image that has been flipped:
