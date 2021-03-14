@@ -21,23 +21,23 @@ ppm_image::ppm_image(int w, int h)
 {
    wd = w;
    ht = h;
-   image = new ppm_pixel*[ht];
+   image_A = new ppm_pixel*[ht];
    for (int i = 0; i<ht; i++){
-      image[i] = new ppm_pixel[wd];
+      image_A[i] = new ppm_pixel[wd];
    }
 }
 
 ppm_image::ppm_image(const ppm_image& orig) 
 {
-   clear();
+  // clear();
    wd = orig.wd;
    ht = orig.ht;
-   image = new ppm_pixel*[ht];
+   image_A = new ppm_pixel*[ht];
    
    for(int i = 0; i < ht; i++){
-      image[i] = new ppm_pixel[wd];
+      image_A[i] = new ppm_pixel[wd];
       for(int j = 0; j< wd; j++){
-         image[i][j] = orig.image[i][j];
+         image_A[i][j] = orig.image_A[i][j];
       }
    }
 }
@@ -49,14 +49,14 @@ ppm_image& ppm_image::operator=(const ppm_image& orig)
       return *this;
    }
 
-   clear();
+   //clear();
    wd = orig.wd;
    ht = orig.ht;
-   image = new ppm_pixel*[ht];
+   image_A = new ppm_pixel*[ht];
    for(int i = 0; i<ht; i++){
-      image[i] = new ppm_pixel[wd];
+      image_A[i] = new ppm_pixel[wd];
       for(int j = 0; j< wd; j++){
-         image[i][j] = orig.image[i][j];
+         image_A[i][j] = orig.image_A[i][j];
       }
    }
 
@@ -71,10 +71,10 @@ ppm_image::~ppm_image()
 void ppm_image::clear()
 {
    for(int i = 0; i < ht; i++){
-      delete[] image[i];
+      delete[] image_A[i];
    }
-   delete[] image;
-   image = NULL;
+   delete[] image_A;
+   image_A = NULL;
 }
 
 bool ppm_image::load(const std::string& filename)
@@ -94,9 +94,9 @@ bool ppm_image::load(const std::string& filename)
    }
    string format, max;
    file >> format >> wd >> ht >> max;
-   image = new ppm_pixel*[ht];
+   image_A = new ppm_pixel*[ht];
    for(int i = 0; i<ht; i++){
-      image[i] = new ppm_pixel[wd];
+      image_A[i] = new ppm_pixel[wd];
    }
    int red, green, blue;
 
@@ -104,9 +104,9 @@ bool ppm_image::load(const std::string& filename)
    for(int i = 0; i< ht; i++){
       for(int j = 0; j<wd; j++){
          file >> red >> green >> blue;
-         image[i][j].r = (unsigned char) red;
-         image[i][j].g = (unsigned char) green;
-         image[i][j].b = (unsigned char) blue;
+         image_A[i][j].r = (unsigned char) red;
+         image_A[i][j].g = (unsigned char) green;
+         image_A[i][j].b = (unsigned char) blue;
       }
    }
 
@@ -136,7 +136,7 @@ bool ppm_image::save(const std::string& filename) const
 
    for(int i = 0; i<ht; i++){
       for(int j = 0; j< wd; j++){
-         file << (int) image[i][j].r << " " << (int) image[i][j].g << " " << (int) image[i][j].b << std::endl;
+         file << (int) image_A[i][j].r << " " << (int) image_A[i][j].g << " " << (int) image_A[i][j].b << std::endl;
       }
    }
 
@@ -153,7 +153,7 @@ bool ppm_image::save(const std::string& filename) const
        for(int j = 0; j<w; j++){
           prev_ht = floor((((double)i)/(h-1))*(ht-1));
           prev_wd = floor((((double)j)/(w-1))*(wd-1));
-          result.image[i][j] = image[prev_ht][prev_wd];
+          result.image_A[i][j] = image_A[prev_ht][prev_wd];
        }
     }
     return result;
@@ -164,8 +164,8 @@ ppm_image ppm_image::flip_horizontal() const
     ppm_image result = ppm_image(wd, ht);
     for(int i = 0; i<ht; i++){
        for(int j = 0; j<wd; j++){
-          result.image[i][j] = image[(ht -1)-i][j];
-          result.image[(ht-1)-i][j] = image[i][j];
+          result.image_A[i][j] = image_A[(ht -1)-i][j];
+          result.image_A[(ht-1)-i][j] = image_A[i][j];
        }
     }
     return result;
@@ -178,7 +178,7 @@ ppm_image ppm_image::subimage(int startx, int starty, int w, int h) const
     int y = 0;
     for(int i = startx; i<(startx + h); i++){
        for(int j = starty; j <( starty + w); j++){
-          result.image[x][y] = image[i][j];
+          result.image_A[x][y] = image_A[i][j];
           y++;
        }
        y = 0;
@@ -191,7 +191,7 @@ void ppm_image::replace(const ppm_image& image, int startx, int starty)
 {
    for(int i = starty; i < starty+image.ht; i++){
       for(int j = startx; j < startx + image.wd; j++){
-         image[i][j] = image.image[i-startx][j - startx];
+         image_A[i][j] = image.image_A[i-startx][j - startx];
       }
    }
 }
@@ -202,10 +202,10 @@ ppm_image ppm_image::alpha_blend(const ppm_image& other, float alpha) const
    unsigned char red, green, blue;
    for(int i = 0; i<ht; i++){
       for(int j = 0; j < wd; j ++){
-         red = image[i][j].r * alpha + other.image[i][j].r *(1-alpha);
-         green = image[i][j].g * alpha + other.image[i][j].g *(1-alpha);
-         blue = image[i][j].b * alpha + other.image[i][j].b *(1-alpha);
-         result.image[i][j] = ppm_pixel {red, green, blue};
+         red = image_A[i][j].r * alpha + other.image_A[i][j].r *(1-alpha);
+         green = image_A[i][j].g * alpha + other.image_A[i][j].g *(1-alpha);
+         blue = image_A[i][j].b * alpha + other.image_A[i][j].b *(1-alpha);
+         result.image_A[i][j] = ppm_pixel {red, green, blue};
       }
    }
    return result;
@@ -216,9 +216,9 @@ ppm_image ppm_image::gammaCorrect(float gamma) const
    ppm_image result(wd, ht); 
    for(int i = 0; i<ht; i++){
       for (int j = 0; j< wd; j++){
-         result.image[i][j].r = (unsigned char)255*pow((float)image[i][j].r/255.0, 1.0/gamma);
-         result.image[i][j].g = (unsigned char)255*pow((float)image[i][j].g/255.0, 1.0/gamma);
-         result.image[i][j].b = (unsigned char)255*pow((float)image[i][j].b/255.0, 1.0/gamma);
+         result.image_A[i][j].r = (unsigned char)255*pow((float)image_A[i][j].r/255.0, 1.0/gamma);
+         result.image_A[i][j].g = (unsigned char)255*pow((float)image_A[i][j].g/255.0, 1.0/gamma);
+         result.image_A[i][j].b = (unsigned char)255*pow((float)image_A[i][j].b/255.0, 1.0/gamma);
       }
    }
    return result;
@@ -230,8 +230,8 @@ ppm_image ppm_image::grayscale() const
    unsigned char pix_color;
    for(int i = 0; i<ht; i++){
       for(int j = 0; j< wd; j++){
-         pix_color = (0.3*image[i][j].r) + (0.59*image[i][j].g) + (0.11*image[i][j].b);
-         result.image[i][j] = ppm_pixel {pix_color, pix_color, pix_color};
+         pix_color = (0.3*image_A[i][j].r) + (0.59*image_A[i][j].g) + (0.11*image_A[i][j].b);
+         result.image_A[i][j] = ppm_pixel {pix_color, pix_color, pix_color};
          
       }
    }
@@ -245,9 +245,9 @@ ppm_pixel ppm_image::get(int row, int col) const
    for (int i = 0; i <ht; i++){
       for (int j = 0 ; j < wd; j++){
          if (i == row && j == col) {
-            r = image[i][j].r;
-            b = image[i][j].g;
-            g = image[i][j].b;
+            r = image_A[i][j].r;
+            b = image_A[i][j].g;
+            g = image_A[i][j].b;
             
          }
       }
@@ -260,7 +260,7 @@ void ppm_image::set(int row, int col, const ppm_pixel& c)
    for(int i = 0; i < ht; i ++){
       for (int j = 0; j< wd; j++){
          if( i == row && j == col){
-            image[i][j] = c;
+            image_A[i][j] = c;
          }
       }  
    }
@@ -281,11 +281,85 @@ ppm_image ppm_image::invert() const {
    ppm_image result(wd, ht);
    for (int i = 0; i < ht; i++){
       for (int j = 0; j< wd; j++){
-         red = 255 - image[i][j].r;
-         green = 255 - image[i][j].g;
-         blue = 255 - image[i][j].b;
-         result.image[i][j] = ppm_pixel{red,green,blue};
+         red = 255 - image_A[i][j].r;
+         green = 255 - image_A[i][j].g;
+         blue = 255 - image_A[i][j].b;
+         result.image_A[i][j] = ppm_pixel{red,green,blue};
       }
    }
    return result;
 }
+
+ppm_image ppm_image::swirl() const {
+   ppm_image result(wd, ht);
+   ppm_pixel pixel;
+   for(int i = 0; i < ht; i++){
+      for(int j = 0; j< wd; j ++){
+         result.image_A[i][j] = image_A[i][j];
+         pixel.r = result.image_A[i][j].r;
+         result.image_A[i][j].r = result.image_A[i][j].g;
+         result.image_A[i][j].g = result.image_A[i][j].b;
+         result.image_A[i][j].b = pixel.r;
+      }
+      
+   }
+   return result;
+}
+
+ppm_image ppm_image::lightest(const ppm_image& other) const{
+   ppm_image result(wd,ht);
+   for (int i = 0 ; i < ht; i++)
+    {
+       for (int j = 0; j < wd ;j++)
+       {
+         result.image_A[i][j].r = std::max(image_A[i][j].r, other.image_A[i][j].r);
+         result.image_A[i][j].g = std::max(image_A[i][j].g, other.image_A[i][j].g);
+         result.image_A[i][j].b = std::max(image_A[i][j].b, other.image_A[i][j].b);
+       }
+    }
+    return result;
+}
+
+ppm_image ppm_image::darkest(const ppm_image& other) const{
+   ppm_image result(wd, ht); 
+   for (int i = 0 ; i < ht; i++)
+    {
+       for (int j = 0; j < wd ;j++)
+       {
+         result.image_A[i][j].r = std::min(image_A[i][j].r, other.image_A[i][j].r);
+         result.image_A[i][j].g = std::min(image_A[i][j].g, other.image_A[i][j].g);
+         result.image_A[i][j].b = std::min(image_A[i][j].b, other.image_A[i][j].b);
+       }
+    }
+    return result;
+}
+
+ppm_image ppm_image::channelShift() const {
+    ppm_image result(wd, ht);
+    for (int i = 0; i < ht; i++) {
+        for (int j = 0; j < wd; j++) {
+            int red = image_A[i][j].b;
+            int green = image_A[i][j].r;
+            int blue = image_A[i][j].g;
+            result.image_A[i][j] = ppm_pixel{ (unsigned char)red, (unsigned char)green, (unsigned char)blue };
+        }
+    }
+    return result;
+}
+
+ppm_image ppm_image::blueExtract() const
+{
+   ppm_image result(wd, ht);
+   for (int i = 0 ; i < ht; i++)
+    {
+       for (int j = 0; j < wd;j++)
+       {
+         result.image_A[i][j].r = 0;
+         result.image_A[i][j].g = 0;
+         result.image_A[i][j].b = image_A[i][j].b;
+       }
+    }
+    return result;
+
+}
+

@@ -6,6 +6,7 @@ using namespace agl;
 int main(int argc, char** argv)
 {
    ppm_image image;
+ /**  ppm_image image;
    image.load("../images/feep.ppm");
    image.save("feep-test-save.ppm"); // should match original
    
@@ -28,6 +29,8 @@ int main(int argc, char** argv)
    pixel.r = 255;
    image.set(1, 1, pixel);
    image.save("feep-test-newcolor.ppm");
+*/
+
 
    // test a non-trivial image
    image.load("../images/earth-ascii.ppm"); // a real image
@@ -62,6 +65,37 @@ int main(int argc, char** argv)
    ppm_image soup;
    soup.load("../images/soup-ascii.ppm");
 
+   //inverted image
+   ppm_image invert = image.invert();
+   invert.save("earth-inverted.ppm");
+
+   //swirl color
+   ppm_image swirl = image.swirl();
+   swirl.save("earth-swirl.ppm");
+
+   //lightest extract
+   ppm_image lightest = image.lightest(invert);
+   lightest.save("earth-lightest.ppm");
+
+   //darkest extract
+   ppm_image darkest = image.darkest(invert);
+   darkest.save("earth-darkest.ppm");
+
+   //channel shift
+   ppm_image channelShift = image.channelShift();
+   channelShift.save("earth-channelShift.ppm");
+
+   //blue extract
+   ppm_image blueExtract = image.blueExtract();
+   blueExtract.save("earth-blueExtract.ppm");
+
+   ppm_image blueExtract2 = invert.blueExtract();
+   blueExtract2.save("earth-blueExtract-Inverted.ppm");
+
+   ppm_image channelShift2 = blueExtract2.channelShift();
+   channelShift2.save("earth-ChannelShift-BlueExtract-Invert.ppm");
+
+
    int y = (int) (0.5f * (image.width() - soup.width()));
    int x = (int) (0.5f * (image.height() - soup.height()));
    ppm_image background = image.subimage(x, y, soup.width(), soup.height());
@@ -69,5 +103,8 @@ int main(int argc, char** argv)
    ppm_image blend = background.alpha_blend(soup, 0.5f);
    image.replace(blend, x, y);
    image.save("earth-blend-0.5.ppm");
+
+   
+
 }
 

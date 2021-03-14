@@ -51,3 +51,9 @@ TODO: Document the features of your PPM image class here. Include example images
 
 TODO: Show artworks using your class
 
+Original Image:
+star.ppm
+
+
+
+

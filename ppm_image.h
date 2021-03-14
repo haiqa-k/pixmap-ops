@@ -20,7 +20,7 @@ namespace agl
    protected:
       int ht = 0; //number of rows
       int wd = 0; //number of columns
-      ppm_pixel **image = NULL; //2D array pointer
+      ppm_pixel **image_A = NULL; //2D array pointer
       void clear();
 
   public:
@@ -68,6 +68,21 @@ namespace agl
 
      //inverts the image
      ppm_image invert() const;
+
+     //swirl
+     ppm_image swirl() const;
+
+     //ppm lightest
+     ppm_image lightest(const ppm_image& other) const;
+
+     //ppm darkest 
+     ppm_image darkest(const ppm_image& other) const;
+
+     //channel shift
+     ppm_image channelShift() const;
+
+     //blue extract
+     ppm_image blueExtract() const;
 
      // Get the pixel at index (row, col)
      ppm_pixel get(int row, int col) const;
